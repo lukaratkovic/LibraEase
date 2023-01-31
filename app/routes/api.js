@@ -283,4 +283,81 @@ router.route('/publisher/:id').get(async function(req,res){
     }
 });
 
+//BOOKS
+router.route('/book').get(async function(req,res){
+    try{
+        let conn = await pool.getConnection();
+        let rows = await conn.query(`SELECT * FROM book`);
+        conn.release();
+        res.send(rows);
+    } catch(e){
+        console.log(e);
+        return res.json({"code": 100, "status": "Error with query"});
+    }
+}).post(async function(req,res){
+    const book = {
+        ISBN: req.body.ISBN,
+        title: req.body.title,
+        pages: req.body.pages,
+        Genre_idGenre: req.body.idGenre,
+        Author_idAuthor: req.body.idAuthor,
+        Publisher_idPublisher: req.body.idPublisher
+    }
+    console.log(book);
+
+    try{
+        let conn = await pool.getConnection();
+        let q = await conn.query('INSERT INTO book SET ?', book);
+        conn.release();
+        res.json({status: 'OK', insertId:q.insertId});
+    } catch(e){
+        console.log(e);
+        res.json({status: 'NOT OK'});
+    }
+}).put(async function(req,res){
+    const book = {
+        ISBN: req.body.ISBN,
+        title: req.body.title,
+        pages: req.body.pages,
+        Genre_idGenre: req.body.idGenre,
+        Author_idAuthor: req.body.idAuthor,
+        Publisher_idPublisher: req.body.idPublisher
+    }
+    console.log(book);
+
+    try {
+        let conn = await pool.getConnection();
+        let q = await conn.query('UPDATE book SET ? WHERE ISBN = ?', [book,req.body.ISBN]);
+        conn.release();
+        res.json({ status: 'OK', changedRows:q.changedRows });
+        console.log(q);
+    } catch (e){
+        res.json({ status: 'NOT OK' });
+    }
+}).delete(async function(req,res){
+    res.json({"code" : 101, "status" : "Body in delete request"});
+});
+
+router.route('/book/:ISBN').get(async function(req,res){
+    try {
+        let conn = await pool.getConnection();
+        let rows = await conn.query('SELECT * FROM book WHERE ISBN=?',req.params.ISBN);
+        conn.release();
+        res.json({ status: 'OK', book:rows[0]});
+    } catch (e){
+        console.log(e);
+        return res.json({"code" : 100, "status" : "Error with query"});
+    }
+}).delete(async function(req,res){
+    try{
+        let conn = await pool.getConnection();
+        let q = await conn.query('DELETE FROM BOOK WHERE ISBN = ?', req.params.ISBN);
+        conn.release();
+        res.json({status: 'OK', affectedRows: q.affectedRows});
+    } catch (e) {
+        console.log(e);
+        res.json({status: 'NOT OK'});
+    }
+});
+
 module.exports = router;
