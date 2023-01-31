@@ -1,13 +1,18 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const mysql = require('promise-mysql');
 const path = require('path');
 const cors = require('cors');
 const config = require('./config');
 
-initDb = async () => {
-    pool = await mysql.createPool(config.pool);
-}
+app.use(express.static(__dirname+'/public/app'));
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
+app.use(cors());
 
-initDb();
+const apiRouter = require('./app/routes/api');
+
+app.use('/api', apiRouter);
+
+app.listen(config.port);
+console.log(`Running on port ${config.port}`);
