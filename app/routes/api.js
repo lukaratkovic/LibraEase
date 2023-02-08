@@ -378,4 +378,9 @@ router.route('/book/:ISBN').get(async function(req,res){
     }
 });
 
+router.get('/me',function (req,res){
+    console.log(req.decoded);
+    res.send({status: 200, user:req.decoded});
+});
+
 module.exports = router;
