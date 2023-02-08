@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const mysql = require('promise-mysql');
 const config = require("../../config");
+const jwt = require('jsonwebtoken');
+const {secret} = require("../../config");
 
 initDb = async () => {
     pool = await mysql.createPool(config.pool);
@@ -11,6 +13,24 @@ initDb();
 
 router.get('/', function(req,res){
     res.send('Welcome to LibraEase API');
+});
+
+router.use(function(req,res,next){
+    console.log('Request');
+    let token = req.body.token || req.params.token || req.headers['x-access-token'] || req.query.token;
+    if(token){
+        console.log(token);
+        jwt.verify(token, secret, function(err, decoded){
+            if(err){
+                res.status(403).send({status: false, message: 'Wrong token provided'});
+            } else {
+                req.decoded = decoded;
+                next();
+            }
+        });
+    } else{
+        res.status(403).send({status: false, message: 'No token provided'});
+    }
 });
 
 //AUTHORS
@@ -64,7 +84,7 @@ router.route('/author/:id').get(async function(req,res){
         let conn = await pool.getConnection();
         let rows = await conn.query('SELECT * FROM author WHERE idAuthor=?',req.params.id);
         conn.release();
-        res.json({ status: 'OK', author:rows[0]});
+        res.send(rows[0]);
     } catch (e){
         console.log(e);
         return res.json({"code" : 100, "status" : "Error with query"});
