@@ -39,23 +39,25 @@ authRouter.post('/register',async function(req,res){
         conn.release;
         if(rows.length === 0)
             res.json({'status': 'NOT OK', description: "Username doesn't exist"});
-        let compare = false;
-        if(rows[0].salt){
-            let hash = crypto.pbkdf2Sync(req.body.password, rows[0].salt, 10000, 64, 'sha512');
-            compare = hash.toString('hex') === rows[0].Password;
-            console.log(rows[0]);
-        }
-        if(compare){
-            const token = jwt.sign({
-                username: rows[0].username,
-                email: rows[0].password,
-                level: rows[0].level
-            }, secret, {
-                expiresIn: 3600
-            });
-            res.json({status: 200, token: token, user: rows[0]});
-        } else if(rows.length > 0){
-            res.json({status: 150, description: 'Wrong password'});
+        else{
+            let compare = false;
+            if(rows[0].salt){
+                let hash = crypto.pbkdf2Sync(req.body.password, rows[0].salt, 10000, 64, 'sha512');
+                compare = hash.toString('hex') === rows[0].Password;
+                console.log(rows[0]);
+            }
+            if(compare){
+                const token = jwt.sign({
+                    username: rows[0].username,
+                    email: rows[0].password,
+                    level: rows[0].level
+                }, secret, {
+                    expiresIn: 3600
+                });
+                res.json({status: 200, token: token, user: rows[0]});
+            } else if(rows.length > 0){
+                res.json({status: 150, description: 'Wrong password'});
+            }
         }
     }
     catch(e){

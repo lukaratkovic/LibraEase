@@ -16,10 +16,8 @@ router.get('/', function(req,res){
 });
 
 router.use(function(req,res,next){
-    console.log('Request');
     let token = req.body.token || req.params.token || req.headers['x-access-token'] || req.query.token;
     if(token){
-        console.log(token);
         jwt.verify(token, secret, function(err, decoded){
             if(err){
                 res.status(403).send({status: false, message: 'Wrong token provided'});
