@@ -10,8 +10,10 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(cors());
 
+const authRouter = require('./app/routes/auth');
 const apiRouter = require('./app/routes/api');
 
+app.use('/auth', authRouter);
 app.use('/api', apiRouter);
 
 app.listen(config.port);

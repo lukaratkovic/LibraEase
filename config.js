@@ -7,5 +7,6 @@ module.exports={
         password : '',
         database : 'libraease',
         debug    :  false
-    }
+    },
+    secret: 'm8B6CMFn%dbS^68^B#1&^3x4J9ZbE#hy'
 }
