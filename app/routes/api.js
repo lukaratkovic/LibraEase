@@ -96,7 +96,7 @@ router.route('/book/:ISBN').get(async function(req,res){
         let conn = await pool.getConnection();
         let rows = await conn.query('SELECT * FROM book WHERE ISBN=?',req.params.ISBN);
         conn.release();
-        res.json({ status: 'OK', book:rows[0]});
+        res.json(rows[0]);
     } catch (e){
         console.log(e);
         return res.json({"code" : 100, "status" : "Error with query"});
