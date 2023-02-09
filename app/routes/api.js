@@ -14,6 +14,94 @@ initDb();
 router.get('/', function(req,res){
     res.send('Welcome to LibraEase API');
 });
+router.route('/genre').get(async function(req,res){
+    try{
+        let conn = await pool.getConnection();
+        let rows = await conn.query(`SELECT * FROM genre`);
+        conn.release();
+        res.send(rows);
+    } catch(e){
+        console.log(e);
+        return res.json({"code": 100, "status": "Error with query"});
+    }
+});
+router.route('/genre/:id').get(async function(req,res){
+    try {
+        let conn = await pool.getConnection();
+        let rows = await conn.query('SELECT * FROM genre WHERE idGenre=?',req.params.id);
+        conn.release();
+        res.json({ status: 'OK', genre:rows[0]});
+    } catch (e){
+        console.log(e);
+        return res.json({"code" : 100, "status" : "Error with query"});
+    }
+});
+router.route('/author').get(async function(req,res){
+    try{
+        let conn = await pool.getConnection();
+        let rows = await conn.query(`SELECT * FROM author`);
+        conn.release();
+        res.send(rows);
+    } catch(e){
+        console.log(e);
+        return res.json({"code": 100, "status": "Error with query"});
+    }
+});
+router.route('/author/:id').get(async function(req,res){
+    try {
+        let conn = await pool.getConnection();
+        let rows = await conn.query('SELECT * FROM author WHERE idAuthor=?',req.params.id);
+        conn.release();
+        res.send(rows[0]);
+    } catch (e){
+        console.log(e);
+        return res.json({"code" : 100, "status" : "Error with query"});
+    }
+});
+router.route('/publisher').get(async function(req,res){
+    try{
+        let conn = await pool.getConnection();
+        let rows = await conn.query(`SELECT * FROM publisher`);
+        conn.release();
+        res.send(rows);
+    } catch(e){
+        console.log(e);
+        return res.json({"code": 100, "status": "Error with query"});
+    }
+});
+router.route('/publisher/:id').get(async function(req,res){
+    try {
+        let conn = await pool.getConnection();
+        let rows = await conn.query('SELECT * FROM publisher WHERE idPublisher=?',req.params.id);
+        conn.release();
+        res.json({ status: 'OK', publisher:rows[0]});
+    } catch (e){
+        console.log(e);
+        return res.json({"code" : 100, "status" : "Error with query"});
+    }
+});
+router.route('/book').get(async function(req,res){
+    try{
+        let conn = await pool.getConnection();
+        let rows = await conn.query(`SELECT * FROM book`);
+        conn.release();
+        res.send(rows);
+    } catch(e){
+        console.log(e);
+        return res.json({"code": 100, "status": "Error with query"});
+    }
+});
+router.route('/book/:ISBN').get(async function(req,res){
+    try {
+        let conn = await pool.getConnection();
+        let rows = await conn.query('SELECT * FROM book WHERE ISBN=?',req.params.ISBN);
+        conn.release();
+        res.json({ status: 'OK', book:rows[0]});
+    } catch (e){
+        console.log(e);
+        return res.json({"code" : 100, "status" : "Error with query"});
+    }
+});
 
 router.use(function(req,res,next){
     let token = req.body.token || req.params.token || req.headers['x-access-token'] || req.query.token;
@@ -31,40 +119,8 @@ router.use(function(req,res,next){
     }
 });
 
-router.route('/author/:id').get(async function(req,res){
-    try {
-        let conn = await pool.getConnection();
-        let rows = await conn.query('SELECT * FROM author WHERE idAuthor=?',req.params.id);
-        conn.release();
-        res.send(rows[0]);
-    } catch (e){
-        console.log(e);
-        return res.json({"code" : 100, "status" : "Error with query"});
-    }
-}).delete(async function(req,res){
-    try{
-        let conn = await pool.getConnection();
-        let q = await conn.query('DELETE FROM author WHERE idAuthor = ?', req.params.id);
-        conn.release();
-        res.json({status: 'OK', affectedRows: q.affectedRows});
-    } catch (e) {
-        console.log(e);
-        res.json({status: 'NOT OK'});
-    }
-});
-
 //GENRES
-router.route('/genre').get(async function(req,res){
-    try{
-        let conn = await pool.getConnection();
-        let rows = await conn.query(`SELECT * FROM genre`);
-        conn.release();
-        res.send(rows);
-    } catch(e){
-        console.log(e);
-        return res.json({"code": 100, "status": "Error with query"});
-    }
-}).post(async function(req,res){
+router.route('/genre').post(async function(req,res){
     const genre = {
         genre: req.body.genre
     }
@@ -98,17 +154,7 @@ router.route('/genre').get(async function(req,res){
     res.json({"code" : 101, "status" : "Body in delete request"});
 });
 
-router.route('/genre/:id').get(async function(req,res){
-    try {
-        let conn = await pool.getConnection();
-        let rows = await conn.query('SELECT * FROM genre WHERE idGenre=?',req.params.id);
-        conn.release();
-        res.json({ status: 'OK', genre:rows[0]});
-    } catch (e){
-        console.log(e);
-        return res.json({"code" : 100, "status" : "Error with query"});
-    }
-}).delete(async function(req,res){
+router.route('/genre/:id').delete(async function(req,res){
     try{
         let conn = await pool.getConnection();
         let q = await conn.query('DELETE FROM genre WHERE idGenre = ?', req.params.id);
@@ -120,18 +166,8 @@ router.route('/genre/:id').get(async function(req,res){
     }
 });
 
-//PUBLISHER
-router.route('/author').get(async function(req,res){
-    try{
-        let conn = await pool.getConnection();
-        let rows = await conn.query(`SELECT * FROM author`);
-        conn.release();
-        res.send(rows);
-    } catch(e){
-        console.log(e);
-        return res.json({"code": 100, "status": "Error with query"});
-    }
-}).post(async function(req,res){
+//AUTHOR
+router.route('/author').post(async function(req,res){
     const author = {
         name: req.body.name,
         surname: req.body.surname
@@ -166,17 +202,7 @@ router.route('/author').get(async function(req,res){
     res.json({"code" : 101, "status" : "Body in delete request"});
 });
 
-router.route('/author/:id').get(async function(req,res){
-    try {
-        let conn = await pool.getConnection();
-        let rows = await conn.query('SELECT * FROM author WHERE idAuthor=?',req.params.id);
-        conn.release();
-        res.json({ status: 'OK', author:rows[0]});
-    } catch (e){
-        console.log(e);
-        return res.json({"code" : 100, "status" : "Error with query"});
-    }
-}).delete(async function(req,res){
+router.route('/author/:id').delete(async function(req,res){
     try{
         let conn = await pool.getConnection();
         let q = await conn.query('DELETE FROM author WHERE idAuthor = ?', req.params.id);
@@ -189,17 +215,7 @@ router.route('/author/:id').get(async function(req,res){
 });
 
 //PUBLISHERS
-router.route('/publisher').get(async function(req,res){
-    try{
-        let conn = await pool.getConnection();
-        let rows = await conn.query(`SELECT * FROM publisher`);
-        conn.release();
-        res.send(rows);
-    } catch(e){
-        console.log(e);
-        return res.json({"code": 100, "status": "Error with query"});
-    }
-}).post(async function(req,res){
+router.route('/publisher').post(async function(req,res){
     const publisher = {
         name: req.body.name
     }
@@ -233,17 +249,7 @@ router.route('/publisher').get(async function(req,res){
     res.json({"code" : 101, "status" : "Body in delete request"});
 });
 
-router.route('/publisher/:id').get(async function(req,res){
-    try {
-        let conn = await pool.getConnection();
-        let rows = await conn.query('SELECT * FROM publisher WHERE idPublisher=?',req.params.id);
-        conn.release();
-        res.json({ status: 'OK', publisher:rows[0]});
-    } catch (e){
-        console.log(e);
-        return res.json({"code" : 100, "status" : "Error with query"});
-    }
-}).delete(async function(req,res){
+router.route('/publisher/:id').delete(async function(req,res){
     try{
         let conn = await pool.getConnection();
         let q = await conn.query('DELETE FROM publisher WHERE idPublisher = ?', req.params.id);
@@ -256,17 +262,7 @@ router.route('/publisher/:id').get(async function(req,res){
 });
 
 //BOOKS
-router.route('/book').get(async function(req,res){
-    try{
-        let conn = await pool.getConnection();
-        let rows = await conn.query(`SELECT * FROM book`);
-        conn.release();
-        res.send(rows);
-    } catch(e){
-        console.log(e);
-        return res.json({"code": 100, "status": "Error with query"});
-    }
-}).post(async function(req,res){
+router.route('/book').post(async function(req,res){
     const book = {
         ISBN: req.body.ISBN,
         title: req.body.title,
@@ -310,17 +306,7 @@ router.route('/book').get(async function(req,res){
     res.json({"code" : 101, "status" : "Body in delete request"});
 });
 
-router.route('/book/:ISBN').get(async function(req,res){
-    try {
-        let conn = await pool.getConnection();
-        let rows = await conn.query('SELECT * FROM book WHERE ISBN=?',req.params.ISBN);
-        conn.release();
-        res.json({ status: 'OK', book:rows[0]});
-    } catch (e){
-        console.log(e);
-        return res.json({"code" : 100, "status" : "Error with query"});
-    }
-}).delete(async function(req,res){
+router.route('/book/:ISBN').delete(async function(req,res){
     try{
         let conn = await pool.getConnection();
         let q = await conn.query('DELETE FROM BOOK WHERE ISBN = ?', req.params.ISBN);
