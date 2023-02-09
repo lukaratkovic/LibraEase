@@ -49,7 +49,7 @@ authRouter.post('/register',async function(req,res){
             if(compare){
                 const token = jwt.sign({
                     username: rows[0].username,
-                    email: rows[0].password,
+                    email: rows[0].email,
                     level: rows[0].level
                 }, secret, {
                     expiresIn: 3600
