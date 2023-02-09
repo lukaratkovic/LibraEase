@@ -269,7 +269,8 @@ router.route('/book').post(async function(req,res){
         pages: req.body.pages,
         Genre_idGenre: req.body.idGenre,
         Author_idAuthor: req.body.idAuthor,
-        Publisher_idPublisher: req.body.idPublisher
+        Publisher_idPublisher: req.body.idPublisher,
+        Description: req.body.Description
     }
     console.log(book);
 
@@ -289,7 +290,8 @@ router.route('/book').post(async function(req,res){
         pages: req.body.pages,
         Genre_idGenre: req.body.idGenre,
         Author_idAuthor: req.body.idAuthor,
-        Publisher_idPublisher: req.body.idPublisher
+        Publisher_idPublisher: req.body.idPublisher,
+        Description: req.body.Description
     }
     console.log(book);
 
