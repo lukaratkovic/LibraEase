@@ -48,6 +48,7 @@ authRouter.post('/register',async function(req,res){
             }
             if(compare){
                 const token = jwt.sign({
+                    idUser: rows[0].idUser,
                     username: rows[0].username,
                     email: rows[0].email,
                     level: rows[0].level
