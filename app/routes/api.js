@@ -31,52 +31,6 @@ router.use(function(req,res,next){
     }
 });
 
-//AUTHORS
-router.route('/author').get(async function(req,res){
-    try{
-        let conn = await pool.getConnection();
-        let rows = await conn.query(`SELECT * FROM author`);
-        conn.release();
-        res.send(rows);
-    } catch(e){
-        console.log(e);
-        return res.json({"code": 100, "status": "Error with query"});
-    }
-}).post(async function(req,res){
-    const author = {
-        name: req.body.name,
-        surname: req.body.surname
-    }
-
-    try{
-        let conn = await pool.getConnection();
-        let q = await conn.query('INSERT INTO author SET ?', author);
-        conn.release();
-        res.json({status: 'OK', insertId:q.insertId});
-    } catch(e){
-        console.log(e);
-        res.json({status: 'NOT OK'});
-    }
-}).put(async function(req,res){
-    const author = {
-        name: req.body.name,
-        surname: req.body.surname
-    }
-    console.log(author);
-
-    try {
-        let conn = await pool.getConnection();
-        let q = await conn.query('UPDATE author SET ? WHERE idAuthor = ?', [author,req.body.id]);
-        conn.release();
-        res.json({ status: 'OK', changedRows:q.changedRows });
-        console.log(q);
-    } catch (e){
-        res.json({ status: 'NOT OK' });
-    }
-}).delete(async function(req,res){
-    res.json({"code" : 101, "status" : "Body in delete request"});
-});
-
 router.route('/author/:id').get(async function(req,res){
     try {
         let conn = await pool.getConnection();
@@ -375,6 +329,52 @@ router.route('/book/:ISBN').get(async function(req,res){
     } catch (e) {
         console.log(e);
         res.json({status: 'NOT OK'});
+    }
+});
+
+//LIBRARY
+router.route('/library').get(async function(req,res){
+    try{
+        let conn = await pool.getConnection();
+        let rows = await conn.query(`SELECT * FROM library`);
+        conn.release();
+        res.send(rows);
+    } catch(e){
+        console.log(e);
+        return res.json({"code": 100, "status": "Error with query"});
+    }
+}).post(async function(req,res){
+    const entry = {
+        User_idUser: req.body.idUser,
+        Book_ISBN: req.body.ISBN,
+        Progress: 0,
+        Status: "reading"
+    }
+    console.log(entry);
+
+    try{
+        let conn = await pool.getConnection();
+        let q = await conn.query('INSERT INTO library SET ?', entry);
+        conn.release();
+        res.json({status: 'OK', insertId:q.insertId});
+    } catch(e){
+        console.log(e);
+        res.json({status: 'NOT OK'});
+    }
+}).put(async function(req,res){
+    const entry = {
+        Progress: req.body.progress,
+        Status: req.body.status
+    }
+
+    try {
+        let conn = await pool.getConnection();
+        let q = await conn.query('UPDATE library SET ? WHERE User_idUser = ? AND Book_ISBN=?', [entry,req.body.idUser,req.body.ISBN]);
+        conn.release();
+        res.json({ status: 'OK', changedRows:q.changedRows });
+        console.log(q);
+    } catch (e){
+        res.json({ status: 'NOT OK' });
     }
 });
 
