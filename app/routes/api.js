@@ -372,6 +372,58 @@ router.route('/library').get(async function(req,res){
     }
 });
 
+//USERS
+router.route('/user').get(async function(req, res){
+    if(req.decoded.level != 1){
+        return res.json({"code": 101, "status": "Unauthorized access!"});
+    }
+    try{
+        let conn = await pool.getConnection();
+        let rows = await conn.query(`SELECT idUser, level, email, username FROM user`);
+        conn.release();
+        res.send(rows);
+    } catch(e){
+        console.log(e);
+        return res.json({"code": 100, "status": "Error with query"});
+    }
+}).put(async function(req,res){
+    if(req.decoded.level != 1){
+        return res.json({"code": 101, "status": "Unauthorized access!"});
+    }
+
+    const user = {
+        level: req.body.level,
+        email: req.body.email,
+        username: req.body.username
+    }
+    console.log(user);
+
+    try {
+        let conn = await pool.getConnection();
+        let q = await conn.query('UPDATE user SET ? WHERE idUser = ?', [user,req.body.idUser]);
+        conn.release();
+        res.json({ status: 'OK', changedRows:q.changedRows });
+        console.log(q);
+    } catch (e){
+        res.json({ status: 'NOT OK' });
+    }
+});
+
+router.route('/user/:id').delete(async function(req,res){
+    if(req.decoded.level != 1){
+        return res.json({"code": 101, "status": "Unauthorized access!"});
+    }
+    try{
+        let conn = await pool.getConnection();
+        let q = await conn.query('CALL DeleteUser(?)', req.params.id);
+        conn.release();
+        res.json({status: 'OK', affectedRows: q.affectedRows});
+    } catch (e) {
+        console.log(e);
+        res.json({status: 'NOT OK'});
+    }
+});
+
 router.get('/me',function (req,res){
     console.log(req.decoded);
     res.send({status: 200, user:req.decoded});
