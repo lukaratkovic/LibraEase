@@ -326,7 +326,7 @@ router.route('/book/:ISBN').delete(async function(req,res){
 router.route('/library').get(async function(req,res){
     try{
         let conn = await pool.getConnection();
-        let rows = await conn.query(`SELECT * FROM library`);
+        let rows = await conn.query(`SELECT * FROM libraryEntry`);
         conn.release();
         res.send(rows);
     } catch(e){
