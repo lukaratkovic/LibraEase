@@ -352,10 +352,14 @@ router.route('/library').get(async function(req,res){
         res.json({status: 'NOT OK'});
     }
 }).put(async function(req,res){
-    const entry = {
-        Progress: req.body.progress,
-        Status: req.body.status
+    let entry;
+    if(req.body.progress){
+        entry = {
+            Progress: req.body.progress,
+            Status: req.body.status
+        }
     }
+    else entry = {Status: req.body.status}
 
     try {
         let conn = await pool.getConnection();
