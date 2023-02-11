@@ -15,6 +15,9 @@ const apiRouter = require('./app/routes/api');
 
 app.use('/auth', authRouter);
 app.use('/api', apiRouter);
+app.get('*',function(req,res){
+    res.sendFile(path.join(__dirname, '/public/app/index.html'));
+})
 
 app.listen(config.port);
 console.log(`Running on port ${config.port}`);
