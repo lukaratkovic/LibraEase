@@ -353,7 +353,7 @@ router.route('/library').get(async function(req,res){
     }
 }).put(async function(req,res){
     let entry;
-    if(req.body.progress){
+    if(req.body.progress != undefined){
         entry = {
             Progress: req.body.progress,
             Status: req.body.status
