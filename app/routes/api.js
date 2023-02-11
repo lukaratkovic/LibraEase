@@ -313,7 +313,7 @@ router.route('/book').post(async function(req,res){
 router.route('/book/:ISBN').delete(async function(req,res){
     try{
         let conn = await pool.getConnection();
-        let q = await conn.query('DELETE FROM BOOK WHERE ISBN = ?', req.params.ISBN);
+        let q = await conn.query('CALL DeleteBook(?)', req.params.ISBN);
         conn.release();
         res.json({status: 'OK', affectedRows: q.affectedRows});
     } catch (e) {
